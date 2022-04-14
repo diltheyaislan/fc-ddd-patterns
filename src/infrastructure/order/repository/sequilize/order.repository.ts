@@ -34,7 +34,6 @@ export default class OrderRepository implements OrderRepositoryInterface {
       {
         customer_id: entity.customerId || orderModel.customerId,
         total: entity.total() || orderModel.total(),
-				items: entity.items || orderModel.items,
       },
       {
         where: {

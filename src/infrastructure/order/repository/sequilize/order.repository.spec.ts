@@ -47,7 +47,7 @@ describe("Order repository test", () => {
     const product = new Product("123", "Product 1", 10);
     await productRepository.create(product);
 
-    const ordemItem = new OrderItem(
+    const orderItem = new OrderItem(
       "1",
       product.name,
       product.price,
@@ -55,7 +55,7 @@ describe("Order repository test", () => {
       2
     );
 
-    const order = new Order("123", "123", [ordemItem]);
+    const order = new Order("123", "123", [orderItem]);
 
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
@@ -71,10 +71,10 @@ describe("Order repository test", () => {
       total: order.total(),
       items: [
         {
-          id: ordemItem.id,
-          name: ordemItem.name,
-          price: ordemItem.price,
-          quantity: ordemItem.quantity,
+          id: orderItem.id,
+          name: orderItem.name,
+          price: orderItem.price,
+          quantity: orderItem.quantity,
           order_id: "123",
           product_id: "123",
         },
@@ -94,7 +94,7 @@ describe("Order repository test", () => {
     const product = new Product("123", "Product 1", 10);
     await productRepository.create(product);
 
-    const ordemItem = new OrderItem(
+    const orderItem = new OrderItem(
       "1",
       product.name,
       product.price,
@@ -102,7 +102,7 @@ describe("Order repository test", () => {
       2
     );
 
-    const order = new Order("123", customer.id, [ordemItem]);
+    const order = new Order("123", customer.id, [orderItem]);
 
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
@@ -112,8 +112,9 @@ describe("Order repository test", () => {
     customer2.changeAddress(address2);
     await customerRepository.create(customer2);
 
-		const orderToUpdate = new Order("123", customer2.id, [ordemItem]);
-		await orderRepository.update(orderToUpdate);
+		order.changeCustomerId(customer2.id);
+
+		await orderRepository.update(order);
 
     const orderModel = await OrderModel.findOne({
       where: { id: order.id },
@@ -123,16 +124,16 @@ describe("Order repository test", () => {
 		expect(orderModel.toJSON()).toStrictEqual({
       id: "123",
       customer_id: customer2.id,
-      total: orderToUpdate.total(),
+      total: order.total(),
       items: [
         {
-          id: ordemItem.id,
-          name: ordemItem.name,
-          price: ordemItem.price,
-          quantity: ordemItem.quantity,
+          id: orderItem.id,
+          name: orderItem.name,
+          price: orderItem.price,
+          quantity: orderItem.quantity,
           order_id: "123",
           product_id: "123",
-        },
+        }
       ],
     });
   });
@@ -148,7 +149,7 @@ describe("Order repository test", () => {
     const product = new Product("123", "Product 1", 10);
     await productRepository.create(product);
 
-    const ordemItem = new OrderItem(
+    const orderItem = new OrderItem(
       "1",
       product.name,
       product.price,
@@ -156,7 +157,7 @@ describe("Order repository test", () => {
       1
     );
 
-    const order = new Order("123", "123", [ordemItem]);
+    const order = new Order("123", "123", [orderItem]);
 
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
@@ -196,7 +197,7 @@ describe("Order repository test", () => {
 		const product2 = new Product("456", "Product 2", 20);
     await productRepository.create(product2);
 
-    const ordemItem1 = new OrderItem(
+    const orderItem1 = new OrderItem(
       "1",
       product1.name,
       product1.price,
@@ -204,10 +205,10 @@ describe("Order repository test", () => {
       1
     );
 
-    const order1 = new Order("123", "123", [ordemItem1]);
+    const order1 = new Order("123", "123", [orderItem1]);
     await orderRepository.create(order1);
 
-		const ordemItem2 = new OrderItem(
+		const orderItem2 = new OrderItem(
       "2",
       product2.name,
       product2.price,
@@ -215,7 +216,7 @@ describe("Order repository test", () => {
       1
     );
 
-    const order2 = new Order("456", "456", [ordemItem2]);
+    const order2 = new Order("456", "456", [orderItem2]);
     await orderRepository.create(order2);
 
     const orders = await orderRepository.findAll();
